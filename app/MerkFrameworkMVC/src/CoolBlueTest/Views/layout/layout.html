@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Cool Blue Framework Test</title>
+    </head>
+    <body>
+		<?php
+			if(\Merkury\View::get('error')){
+                sprintf("<h3>%d - %s </h3>", \Merkury\View::printVar('errCode'), \Merkury\View::printVar('error'));
+            }
+            elseif(\Merkury\View::get('success')){
+				echo(\Merkury\View::printVar('success'));
+        		echo \Merkury\View::content();
+            }
+            else{
+                echo \Merkury\View::content();
+            }
+		 ?>
+    </body>
+</html>

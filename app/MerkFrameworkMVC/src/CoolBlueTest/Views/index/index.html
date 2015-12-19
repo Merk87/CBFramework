@@ -1,0 +1,21 @@
+<?php use \Merkury\View;?>
+<?php View::templateExtend('layout/layout.html') ?>
+<h1>Address List</h1>
+<style type="text/css">
+	table {
+	  border-collapse: collapse;
+	}
+	td {
+		border: 1px solid black;
+	}
+</style>
+<table>
+<?php
+	$obj = View::returnObject('addressList');
+	foreach ($obj as $key => $o) {
+		echo('<tr><td>'.$o->getName()."</td><td>".$o->getStreet()."</td><td>".$o->getPhone()."</td><td><a href=/address/$key>View</a></td><td><a href=/edit-address/$key>Edit</a></td><td><a href=/remove-address/$key>Remove</a></td></tr>");
+	}
+?></table>
+<div style="margin-top: 10px">
+<a href="/add-address">Add new Address</a>
+</div>
