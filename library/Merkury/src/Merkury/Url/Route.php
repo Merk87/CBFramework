@@ -43,18 +43,11 @@ class Route
     {
         $method = $request->isPost() ? '_post' : '_get';
 
-        try {
-            foreach (self::${$method} as self::$_uri) {
-                if (self::$_uri->match($request->server('REQUEST_URI'))) {
-                    return self::$_uri;
-                }
-                // else{
-                //     throw new \Exception('Page not found');
-                // }
 
+        foreach (self::${$method} as self::$_uri) {
+            if (self::$_uri->match($request->server('REQUEST_URI'))) {
+                return self::$_uri;
             }
-        } catch (\Exception $e) {
-            var_dump($e->getMessage());
         }
 
         return false;

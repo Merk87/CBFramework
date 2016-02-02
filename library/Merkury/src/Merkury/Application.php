@@ -38,7 +38,16 @@ class Application
 
     private function _isRequestMatching()
     {
-        return $this->_uri = Url\Route::match($this->_request);
+        try{
+            if(Url\Route::match($this->_request)){
+                return $this->_uri = Url\Route::match($this->_request);
+            }else{
+                throw new \Exception('404 Not found');
+            }
+        }catch(\Exception $e){
+            echo $e->getMessage();
+            exit;
+        }
     }
 
     private function _getControllerInstance()
