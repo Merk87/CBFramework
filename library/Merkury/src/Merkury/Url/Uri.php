@@ -25,7 +25,6 @@ class Uri
 
     public function match($request_uri)
     {
-
         list($uri,) = explode('?', $request_uri);
 
         $this->_uri = preg_replace_callback(

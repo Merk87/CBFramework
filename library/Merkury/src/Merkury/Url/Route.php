@@ -19,7 +19,7 @@ class Route
      * @return \Merkury\Url\Uri
      */
     public static function get($uri, $controller, $action)
-    {   
+    {
         return self::$_get[] = new \Merkury\Url\Uri($uri, $controller, $action);
     }
 
@@ -42,13 +42,24 @@ class Route
     public static function match(\Merkury\Http\Request $request)
     {
         $method = $request->isPost() ? '_post' : '_get';
-        foreach (self::${$method} as self::$_uri){
-            if (self::$_uri->match($request->server('REQUEST_URI'))){
-                return self::$_uri;
+
+        try {
+            foreach (self::${$method} as self::$_uri) {
+                if (self::$_uri->match($request->server('REQUEST_URI'))) {
+                    return self::$_uri;
+                }
+                // else{
+                //     throw new \Exception('Page not found');
+                // }
+
             }
+        } catch (\Exception $e) {
+            var_dump($e->getMessage());
         }
 
         return false;
     }
+
+
 
 }

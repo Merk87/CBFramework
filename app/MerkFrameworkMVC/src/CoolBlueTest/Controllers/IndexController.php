@@ -10,8 +10,9 @@ class IndexController extends \Merkury\Controller
     public function indexAction(){
     	$addressList = $this->getAllAddresses();
 
-    	if($addressList == null)
+    	if($addressList == null){
     		return View::render('index/empty.html');
+        }
 
 		return View::render('index/index.html', array('addressList' => $addressList));
     }
@@ -21,8 +22,9 @@ class IndexController extends \Merkury\Controller
         $addressId = $id;
 
         $addressList = $this->getAllAddresses();
-        if($id > count($addressList) || $addressList == null)
+        if($id > count($addressList) || $addressList == null){
             return View::render('index/index.html', array('error' => ' Register not found', 'errCode' => '404'));
+        }
 
         return View::render('index/index.html', array('addressList' => array($addressList[$id])));
     }
@@ -33,17 +35,20 @@ class IndexController extends \Merkury\Controller
             $address = new Address();
             $formValues = $this->_request->getPostParams();
 
-            if($address->validateFormData($formValues) != true)
+            if($address->validateFormData($formValues) != true){
                return View::render('index/add-address.html', array('error' => ' Bad Post Data', 'errCode' => '400'));
+            }
             $address->setName($formValues['name']);
             $address->setPhone($formValues['phone']);
             $address->setStreet($formValues['street']);
 
             $res = $this->writeNewAddress($address);
-            if($res)
+            if($res){
                 return View::render('index/add-address.html', array('success' => 'Contact added'));
-            else
+            }
+            else{
                return View::render('index/add-address.html', array('error' => ' Error writing the file', 'errCode' => '500'));
+            }
         }
 
     	return View::render('index/add-address.html');
@@ -53,22 +58,26 @@ class IndexController extends \Merkury\Controller
 
         $address = $this->getAddressByLine($id);
 
-        if(!$address)
+        if(!$address){
             return View::render('index/index.html', array('error' => ' Register not found', 'errCode' => '404'));
+        }
 
         if($this->isMethodPost()){
             $formValues = $this->_request->getPostParams();
 
-            if($address->validateFormData($formValues) != true)
+            if($address->validateFormData($formValues) != true){
                return View::render('index/add-address.html', array('error' => ' Bad Post Data', 'errCode' => '400'));
+            }
             $address->setName($formValues['name']);
             $address->setPhone($formValues['phone']);
             $address->setStreet($formValues['street']);
             $res = $this->updateAddress($address, $id);
-            if($res)
+            if($res){
                 return View::render('index/index.html', array('success' => 'Contact '.$address->getName().' updated', 'addressList' => $this->getAllAddresses()));
-            else
+            }
+            else{
                return View::render('index/edit-address.html', array('error' => ' Error writing the file', 'errCode' => '500', 'address' => $address, 'id' => $id));
+            }
         }
 
         return View::render('index/edit-address.html', array('address' => $address, 'id' => $id));
@@ -78,21 +87,25 @@ class IndexController extends \Merkury\Controller
 
         $address = $this->getAddressByLine($id);
 
-        if(!$address)
+        if(!$address){
             return View::render('index/index.html', array('error' => ' Register not found', 'errCode' => '404'));
+        }
 
-            $res = $this->updateAddress($address, $id, true);
-            if($res)
-                return View::render('index/index.html', array('success' => 'Contact '.$address->getName().' removed', 'addressList' => $this->getAllAddresses()));
-            else
-               return View::render('index/remove-address.html', array('error' => ' Error writing the file', 'errCode' => '500', 'address' => $address, 'id' => $id));
+        $res = $this->updateAddress($address, $id, true);
+        if($res){
+            return View::render('index/index.html', array('success' => 'Contact '.$address->getName().' removed', 'addressList' => $this->getAllAddresses()));
+        }
+        else{
+           return View::render('index/remove-address.html', array('error' => ' Error writing the file', 'errCode' => '500', 'address' => $address, 'id' => $id));
+        }
     }
 
     private function getAllAddresses(){
         $file = file_exists(APP_PATH.'/../public/uploads/addresses.csv') ? fopen(APP_PATH.'/../public/uploads/addresses.csv', 'r') : null;
 
-        if(!$file)
+        if(!$file){
             return null;
+        }
 
         $addressList = array();
 
@@ -117,8 +130,9 @@ class IndexController extends \Merkury\Controller
     private function writeNewAddress($address){
         $file = file_exists(APP_PATH.'/../public/uploads/addresses.csv') ? fopen(APP_PATH.'/../public/uploads/addresses.csv', 'a') : null;
 
-        if(!$file)
+        if(!$file){
             return null;
+        }
 
         $res = fputcsv($file,explode(',',$address->formatToSave()));
         fclose($file);
@@ -128,13 +142,16 @@ class IndexController extends \Merkury\Controller
 
     private function updateAddress($newAddress, $pos, $remove = false){
         $addresses = $this->getAllAddresses();
-        if($remove == false)
+        if($remove == false){
             $addresses[$pos] = $newAddress;
+        }
         else
-            if(array_key_exists($pos, $addresses)) 
+            if(array_key_exists($pos, $addresses)){
                 unset($addresses[$pos]);
-            else
+            }
+            else{
                 return false;
+            }
 
         $totalLines = count($addresses);
         $temp = fopen(APP_PATH.'/../public/uploads/tempUpdate.csv', 'a');
@@ -142,8 +159,9 @@ class IndexController extends \Merkury\Controller
         //backup original file
         rename(APP_PATH.'/../public/uploads/addresses.csv', APP_PATH.'/../public/uploads/backup.csv');
 
-        if(!$temp)
+        if(!$temp){
             return null;
+        }
         $writted = 0;
         foreach ($addresses as $address) {
             $tres = fputcsv($temp, explode(',', $address->formatToSave()));

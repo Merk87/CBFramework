@@ -50,8 +50,9 @@ class Address{
 	public function validateFormData($params){
 		foreach ($this->getPropertyList() as $key => $value) {
 			if(array_key_exists($key, $params)){
-				if(gettype($params[$key]) != $value)
+				if(gettype($params[$key]) != $value){
 					return false;
+				}
 			}
 		}
 		return true;

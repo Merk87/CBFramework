@@ -28,8 +28,9 @@ class Autoloader
         foreach ($this->_include_paths as $path){
             $include_class = $path . '/' . $file;
 
-            if(file_exists($include_class))
+            if(file_exists($include_class)){
                 return $include_class;
+            }
         }
     }
 }
